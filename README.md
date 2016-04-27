@@ -1,11 +1,27 @@
-Make sure Node is fully up to date > 5
+# Watchman
+Keep an eye on your kingdom.
 
 
-install OpenCV
 
-$ sudo apt-get install libopencv-dev python-opencv
+## Setup 
+
+### Install the OpenCV image processing libary
+`$ sudo apt-get install libopencv-dev python-opencv`
 
 
-Install local dependencies - the important one is opencv
+### Install required NodeJS packages
+`$ npm install`
 
-$ npm install
+
+## Running
+
+### Start the Watchman server
+`$ forever start watchman.js`
+
+### Start each Client Camera
+`$ forever start camera.js`
+
+### Website
+Hosted by the watchman server
+
+`http://localhost:8080`
