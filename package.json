@@ -1,31 +1,28 @@
 {
   "name": "watchman",
-  "description": "TODO",
+  "description": "Keep an eye on your kingdom.",
   "version": "1.0.0",
   "keywords": [
-    "photo",
-    "photos"
+    "watchman"
   ],
-  "homepage": "TODO",
+  "homepage": "https://github.com/vjacek/watchman",
   "repository": {
     "type": "git",
-    "url": "git://TODO.git"
+    "url": "https://github.com/vjacek/watchman"
   },
   "bugs": {
-    "url": "http://TODO"
+    "url": "https://github.com/vjacek/watchman/issues"
   },
   "author": {
     "name": "Victor Jacek",
     "email": "victorjacek@gmail.com",
-    "url": "TODO"
+    "url": "https://github.com/vjacek"
   },
-  "private": "true",
   "dependencies": {
     "bluebird": "^3.3.1",
     "express": "^4.13.4",
     "mysql": "^2.10.2",
     "opencv": "^5.0.0",
     "socket.io": "^1.4.5",
-    "tessel-av": "^0.5.0"
   }
 }
