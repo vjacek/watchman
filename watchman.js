@@ -14,29 +14,37 @@ server.listen(port, function () {
 
 app.use(express.static(path.join(__dirname, '/')));
 
-/*
-// Create socket connection to push updates from log file changes
-io.on('connection', function(socket) {
-    socket.on('log', function(data) {
-		// run the tailing as a singleton
-		if ( !tailing ) {
-			tailing = 1;
-			tailFile.on('line', function(data) {
-				io.emit('log', data);
-			});
-		}
-    });
-});
-*/
+
+var d;
+
 io.on('connection', function(socket) {
 
     console.log('Got Connection');
 
-    // Send signal to clients to start their cameras
-    //socket.emit('start-camera', 'start camera command');
-
-    // Listen for camera data from clients
+    // Listen for camera data from cameras
     socket.on('camera', function(data) {
         console.log(data);
+
+        // Make latest image available to clients
+        d = data;
+
     });
+
+
+    socket.on('client-here', function(data) {
+        console.log('client connected');
+
+        function sendData() {
+            socket.emit('stream', d)
+            setTimeout(function() {
+                console.log('sending data to client');
+                sendData();
+            }, 1000);
+        }
+
+        sendData(socket);
+
+
+    });
+
 });

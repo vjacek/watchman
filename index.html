@@ -1,38 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <title>stream</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src='/jquery-2.2.3.min.js'></script>
+    <script src='/socket.io/socket.io.js'></script>
 </head>
 <body>
-    <canvas id="output" width="320" height="240" style="border:solid;"></canvas>
+    <canvas id="camera" width="640" height="480" style="border:solid;"></canvas>
+
+
     <script>
 
-    var socket = io();
-    socket.emit('ready');
+    var socket = io.connect('http://localhost:8080');
+
+    socket.emit('client-here');
+
+    // Listen for camera data from clients
+    socket.on('stream', function(data) {
+        console.log(data);
+        $('#camera').val(data);
+    });
 
 
-
-
-
-    /*
-    window.onload = function() {
-        var context = document.getElementById("output").getContext("2d");
-        var socket = io();
-        var frame = null;
-
-        console.log('sending ready');
-        socket.emit("ready");
-
-        socket.on("image", function(encoded) {
-            console.log('got an image');
-            console.log(encoded);
-
-            frame = "data:image/jpeg;base64," + encoded;
-        });
-    };
-    */
     </script>
 </body>
 </html>
