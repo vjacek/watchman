@@ -6,6 +6,7 @@ var io = require('socket.io')(server);
 var os = require('os');
 var path = require('path');
 var port = 8080;
+var cv = require('opencv');
 
 
 server.listen(port, function () {
@@ -22,12 +23,9 @@ io.on('connection', function(socket) {
     console.log('Got Connection');
 
     // Listen for camera data from cameras
-    socket.on('camera', function(data) {
-        console.log(data);
-
+    socket.on('camera', function(imageBuffer) {
         // Make latest image available to clients
-        d = data;
-
+        d = imageBuffer;
     });
 
 
@@ -39,11 +37,10 @@ io.on('connection', function(socket) {
             setTimeout(function() {
                 console.log('sending data to client');
                 sendData();
-            }, 1000);
+            }, 35);
         }
 
         sendData(socket);
-
 
     });
 

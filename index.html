@@ -7,8 +7,7 @@
     <script src='/socket.io/socket.io.js'></script>
 </head>
 <body>
-    <canvas id="camera" width="640" height="480" style="border:solid;"></canvas>
-
+    <canvas id="canvas" width="640" height="480" style="border:solid;"></canvas>
 
     <script>
 
@@ -16,10 +15,19 @@
 
     socket.emit('client-here');
 
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+
     // Listen for camera data from clients
-    socket.on('stream', function(data) {
-        console.log(data);
-        $('#camera').val(data);
+    socket.on('stream', function(imageBuffer) {
+        var blob = new Blob([imageBuffer], {type: "image/png"});
+        var ctx = document.getElementById('canvas').getContext('2d');
+        var img = new Image;
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            URL.revokeObjectURL(img.src)
+        }
+        img.src = URL.createObjectURL(blob);
     });
 
 
