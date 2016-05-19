@@ -35,9 +35,8 @@ io.on('connection', function(socket) {
         function sendData() {
             socket.emit('stream', d)
             setTimeout(function() {
-                console.log('sending data to client');
                 sendData();
-            }, 35);
+            }, 100);
         }
 
         sendData(socket);
