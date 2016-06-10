@@ -3,11 +3,10 @@ Keep an eye on your kingdom.
 
 
 
-## Setup 
+## Setup
 
 ### Install the OpenCV image processing libary
 `$ sudo apt-get install libopencv-dev python-opencv`
-
 
 ### Install required NodeJS packages
 `$ npm install`
@@ -15,7 +14,7 @@ Keep an eye on your kingdom.
 
 ## Running
 
-### Start the Watchman server
+### Start the Watchman server to receive video
 `$ forever start watchman.js`
 
 ### Start each Client Camera

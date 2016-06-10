@@ -3,7 +3,8 @@ var lines = new cv.Matrix();
 var camera = new cv.VideoCapture(0);
 
 var io = require('socket.io-client');
-var socket = io.connect('http://192.168.1.9:8080');
+var socket = io.connect('http://192.168.1.11:8080');
+
 
 
 capture();
