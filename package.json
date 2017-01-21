@@ -1,28 +1,31 @@
 {
-    "name": "watchman",
-    "description": "Keep an eye on your kingdom.",
-    "version": "1.0.0",
-    "keywords": [
-        "watchman"
-    ],
-    "homepage": "https://github.com/vjacek/watchman",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/vjacek/watchman"
-    },
-    "bugs": {
-        "url": "https://github.com/vjacek/watchman/issues"
-    },
-    "author": {
-        "name": "Victor Jacek",
-        "email": "victorjacek@gmail.com",
-        "url": "https://github.com/vjacek"
-    },
-    "dependencies": {
-        "bluebird": "^3.3.1",
-        "express": "^4.13.4",
-        "mysql": "^2.10.2",
-        "opencv": "^5.0.0",
-        "socket.io": "^1.4.5"
-    }
+  "name": "watchman",
+  "description": "Keep an eye on your kingdom.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "watchman"
+  ],
+  "homepage": "https://github.com/vjacek/watchman",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vjacek/watchman"
+  },
+  "bugs": {
+    "url": "https://github.com/vjacek/watchman/issues"
+  },
+  "author": {
+    "name": "Victor Jacek",
+    "email": "victorjacek@gmail.com",
+    "url": "https://github.com/vjacek"
+  },
+  "dependencies": {
+    "bluebird": "^3.3.1",
+    "express": "^4.13.4",
+    "mysql": "^2.10.2",
+    "node-gyp": "^3.4.0",
+    "node-pre-gyp": "^0.6.32",
+    "opencv": "^3.0.0",
+    "socket.io": "^1.4.5"
+  }
 }
