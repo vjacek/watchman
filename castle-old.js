@@ -5,29 +5,20 @@ var io = require('socket.io')(server);
 
 var os = require('os');
 var path = require('path');
-var port = 8000;
+var port = 8080;
 // don't need on server var cv = require('opencv');
 
-app.post('/', function (request, response) {
-    console.log('got a connection incoming');
-  res.send('Hello World!');
-})
 
 server.listen(port, function () {
   console.log(`http://${os.hostname()}.local:${port}`);
 });
 
-//app.use(express.static(path.join(__dirname, '/')));
-
-
-
+app.use(express.static(path.join(__dirname, '/')));
 
 // An object holding the current/latest imageBuffer for each watchman client
 // Indexed by watchman ID; the watchman's OS host name
 var d = {};
 
-
-/*
 io.on('connection', function(socket) {
 
     console.log('Got Connection');
@@ -54,4 +45,3 @@ io.on('connection', function(socket) {
     });
 
 });
-*/
