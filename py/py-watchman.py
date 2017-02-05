@@ -7,6 +7,7 @@ import picamera
 client_socket = socket.socket()
 client_socket.connect(('localhost', 8000))
 
+
 # Make a file-like object out of the connection
 connection = client_socket.makefile('wb')
 try:
