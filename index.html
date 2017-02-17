@@ -7,28 +7,113 @@
     <script src='/socket.io/socket.io.js'></script>
 </head>
 <body>
-    <canvas id="canvas" width="640" height="480" style="border:solid;"></canvas>
+
+    <canvas id='canvas' width='640' height='480' style="border:solid;"></canvas>
+
+    <img id='i'  width='640' height='480'></i>
 
     <script>
 
-    var socket = io.connect('http://localhost:8080');
+    var socket = io.connect('http://localhost:8888');
 
     socket.emit('client-here');
 
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
+    var domURL = window.URL || window.webkitURL;
+
+    var isImageComplete = false;
+    var imagePartArray = [];
 
     // Listen for camera data from clients
-    socket.on('stream', function(imageBuffer) {
-        var blob = new Blob([imageBuffer], {type: "image/png"});
-        var ctx = document.getElementById('canvas').getContext('2d');
-        var img = new Image;
-        img.onload = function() {
-            ctx.drawImage(img, 0, 0);
-            URL.revokeObjectURL(img.src)
+    socket.on('stream', function(imagePart) {
+
+        // The maximum size of a TCP packet is 64K or 65535 bytes
+        // Since a single JPEG image may exceed this size, it is split up among several packets by the network layer
+        // This results in receiving imageBuffers that contain partial JPEG images on the final client
+
+        // We know several useful things:
+        //   A new imagePart of size 65535 (TODO maybe 65356 seems like send.js reads it as one extra byte)
+        //   A JPEG image starts with hex prefix "ffd8 ffe0 0010 4a46 4946"
+        //   A JPEG image ends with hex "ff d9" (remember this may occur other places in the file however)
+
+console.log('got a stream from castle '+imagePart.byteLength);
+//console.log(imagePart);
+/*
+var a = new Uint8Array(imagePart);
+
+
+    //console.log(ab2hex(imagePart));
+
+        // TODO: this allocates a whole new variable just to read the first 4 bytes, pretty wasteful
+        var imagePartHex = ab2hex(imagePart);
+        var iPHLength = imagePartHex.length;
+
+        if(imagePartHex[0] == 'f' &&
+            imagePartHex[1] == 'f' &&
+            imagePartHex[2] == 'd' &&
+            imagePartHex[3] == '8') {
+                console.log('imageStart');
+                imagePartArray.push(imagePart);
+            }
+        else if(imagePartHex[iPHLength-4] == 'f' &&
+                imagePartHex[iPHLength-3] == 'f' &&
+                imagePartHex[iPHLength-2] == 'd' &&
+                imagePartHex[iPHLength-1] == '9') {
+                    console.log('imageEnd');
+                    imagePartArray.push(imagePart);
+                    isImageComplete = true;
+                }
+
+
+        if(isImageComplete) {
+            console.log('image complete, drawing');
+            var blob = new Blob(imagePartArray, {type: "image/jpeg"});
+            imagePartArray = [];
+            drawImage(blob);
+            isImageComplete = false;
         }
-        img.src = URL.createObjectURL(blob);
+
+*/
+
+
+    drawImage(imagePart);
+
+
     });
+
+    // Draw the image to canvas
+    function drawImage(imageBuffer) {
+        var blob = new Blob([imageBuffer], {type: "image/jpeg"});
+        var url = domURL.createObjectURL(blob);
+        var img = new Image;
+
+        img.onload = function() {
+            console.log('drawing image');
+            ctx.drawImage(img, 0, 0);
+            domURL.revokeObjectURL(url);
+        };
+
+        img.src = url;
+    }
+
+    function ab2hex(buffer) { // buffer is an ArrayBuffer
+      return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+    }
+
+    function ab2str(buf) {
+      //return String.fromCharCode.apply(null, new Uint16Array(buf));
+      return String.fromCharCode.apply(null, new Uint16Array(buf));
+    }
+
+    function str2ab(str) {
+      var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+      var bufView = new Uint16Array(buf);
+      for (var i=0, strLen=str.length; i<strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+      }
+      return buf;
+    }
 
 
     </script>
