@@ -1,45 +1,20 @@
+var os = require('os');
 var io = require('socket.io-client');
+
+// TODO: load the Castle address and port dynamically
 var socket = io.connect('http://192.168.0.104:8888');
 
-//var fs = require('fs');
-
-
 if(!process.stdin.isTTY) {
+    var image = Buffer.alloc(0);
 
-//    var isFrameComplete = false;
-    var frameTotal = Buffer.alloc(0);
-    
-    process.stdin.on('data', function(frame) {
-	console.log('got a frame '+frame.length);
-
-	//console.log(frame);
-	
-	frameTotal = Buffer.concat([frameTotal, frame]);
-	
-	if(frame[frame.length-2].toString(16) == 'ff' && frame[frame.length-1].toString(16) == 'd9') {
-	    console.log('sending frame to watchman '+frameTotal.length);
-	    socket.emit('watchman', {id: 'send_script', imageBuffer: frameTotal});
-	    frameTotal = Buffer.alloc(0);
-	}
-
-
-
-	    
-//	console.log(frame[0].toString(16)+' '+frame[1].toString(16)+' '+frame[2].toString(16)+' '+frame[3].toString(16)+
-//		    ' ... '+frame[frame.length-4].toString(16)+' '+frame[frame.length-3].toString(16)+' '+frame[frame.length-2].toString(16)+' '+frame[frame.length-1].toString(16));
-
-	
-	//socket.emit('watchman', {id: 'send_script', imageBuffer: frame});
-
-	//var d = (new Date()).getTime();
-	//fs.writeFile(d+'.jpeg', frame, {encoding:'base64'}, function(error) {
-	//    if(error) {
-	//	console.log(error);
-	//    }
-	//});
-
-	
+    // Data is read in chunks of up to 64K (65356 bytes)
+    // These need to be assembled into JPEG before being sent to castle
+    process.stdin.on('data', function(chunk) {
+    	image = Buffer.concat([image, chunk]);
+    	if(chunk[chunk.length-2].toString(16) == 'ff' && chunk[chunk.length-1].toString(16) == 'd9') {
+    	    console.log('sending frame to watchman '+image.length);
+    	    socket.emit('watchman', {id: os.hostname(), image: image});
+    	    image = Buffer.alloc(0);
+    	}
     });
 }
-
-

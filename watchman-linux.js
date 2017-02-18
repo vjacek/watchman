@@ -1,14 +1,8 @@
 var cv = require('opencv');
 var lines = new cv.Matrix();
-//var camera = new cv.VideoCapture(0);
-var RaspiCam = require('raspicam');
+var camera = new cv.VideoCapture(0);
 var io = require('socket.io-client');
 var os = require('os');
-
-var camera = new RaspiCam({
-    mode: 'video',
-    output: '-'
-});
 
 // Connect to the Castle server
 var socket = io.connect('http://192.168.1.103:8080');
@@ -43,15 +37,15 @@ function capture() {
     camera.read(function(error, matrix) {
 
 	console.log(matrix.size());
-	
+
 	// TODO Change to try/catch
-	if(!error) {	
+	if(!error) {
             socket.emit('watchman', {id: hostname, imageBuffer: matrix.toBuffer()});
 	}
 	else {
 	    console.log(error);
 	}
-	    
+
     });
 
 }
