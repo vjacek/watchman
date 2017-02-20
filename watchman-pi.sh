@@ -1,3 +1,33 @@
+# Automatically locate the Castle server
+# Port is always fixed at 8888, but DHCP network may change IPs
+
+#!/bin/bash
+
+subnet="192.168.0."
+ip=100
+max=110
+port=":8888"
+path="/locate"
+
+echo "Watchman startup... "
+echo "Looking for Castle..."
+
+while (("$ip" < "$max"))
+do
+    address="$subnet$ip$port$path"
+    echo "Looking for Castle at $subnet$ip"
+    result=$(curl -s --connect-timeout 1 $address)
+    if [ "$result" == "true" ]
+    then
+        castleIP="$subnet$ip"
+        echo "Found Castle at $subnet$ip"
+        break
+    fi
+    ((ip++))
+done
+
+# Start the video camera and send each image to the Castle server
+
 # -o -      : Write to stdout
 # -t 0      : Capture indefinitely
 # -w xxx    : Image width
@@ -7,4 +37,4 @@
 # -fl       : Flush buffer after every capture, reduces latency and makes image splitting cleaner
 # -cd MJPEG : Motion JPEG formats capture frames as JPEG images
 # -vf       : Flip image vertically (camera is mounted upside down)
-raspivid -o - -t 0 -w 1024 -h 768 -fps 24 -g 1 -fl -cd MJPEG -vf | node send.js
+raspivid -o - -t 0 -w 1024 -h 768 -fps 10 -g 1 -fl -cd MJPEG -vf | node send.js $castleIP

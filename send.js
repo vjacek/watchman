@@ -1,8 +1,8 @@
 var os = require('os');
 var io = require('socket.io-client');
 
-// TODO: load the Castle address and port dynamically
-var socket = io.connect('http://192.168.0.104:8888');
+// The Castle address is loaded dynamically and passed to this script as an argument
+var socket = io.connect('http://'+process.argv[2]+':8888');
 
 if(!process.stdin.isTTY) {
     var image = Buffer.alloc(0);
@@ -12,7 +12,7 @@ if(!process.stdin.isTTY) {
     process.stdin.on('data', function(chunk) {
     	image = Buffer.concat([image, chunk]);
     	if(chunk[chunk.length-2].toString(16) == 'ff' && chunk[chunk.length-1].toString(16) == 'd9') {
-    	    console.log('sending frame to watchman '+image.length);
+    	    console.log('Sending image to Castle '+image.length);
     	    socket.emit('watchman', {id: os.hostname(), image: image});
     	    image = Buffer.alloc(0);
     	}
