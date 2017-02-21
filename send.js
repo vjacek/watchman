@@ -10,11 +10,18 @@ if(!process.stdin.isTTY) {
     // Data is read in chunks of up to 64K (65356 bytes)
     // These need to be assembled into JPEG before being sent to castle
     process.stdin.on('data', function(chunk) {
-    	image = Buffer.concat([image, chunk]);
-    	if(chunk[chunk.length-2].toString(16) == 'ff' && chunk[chunk.length-1].toString(16) == 'd9') {
-    	    console.log('Sending image to Castle '+image.length);
-    	    socket.emit('watchman', {id: os.hostname(), image: image});
-    	    image = Buffer.alloc(0);
-    	}
+        if(chunk != undefined) {
+            try {
+            	image = Buffer.concat([image, chunk]);
+            	if(chunk[chunk.length-2].toString(16) == 'ff' && chunk[chunk.length-1].toString(16) == 'd9') {
+            	    console.log('Sending image to Castle '+image.length);
+            	    socket.emit('watchman', {id: os.hostname(), image: image});
+            	    image = Buffer.alloc(0);
+            	}
+            }
+            catch(error) {
+                console.log(error);
+            }
+        }
     });
 }
