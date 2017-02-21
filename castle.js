@@ -43,6 +43,39 @@ io.on('connection', function(socket) {
         //fs.writeFile(date+'.jpeg', d[watchmanData.id], {encoding: 'base64'}, function(error) {
         //    console.log(error);
         //});
+
+        // Write images to disk as a MJPEG
+        fs.appendFile(watchmanData.id+'.mjpeg', watchmanData.image, function(error) {
+            if(error) {
+                console.log('Error writing to disk.');
+                console.log(error);
+            }
+        });
+
+
+        // 10 MB written in 43 seconds
+        // ... therefore...
+        // 100 MB written in 430 seconds / 7.1 minutes
+        // 1000 MB / 1GB written in 4300 seconds / 71 minutes / 1.2 hours
+        // 20 GB per day
+
+        // TODO: don't want to do this on every single write, just do like every 10th or 100th image...
+        // Roll the video file once the current one has reached 100MB
+        fs.stat(watchmanData.id+'.mjpeg', function(error, stats) {
+            if(stats != undefined && stats.size > 100000000) {
+            //if(stats != undefined && stats.size > 5000000) {
+                var stream = fs.createReadStream(watchmanData.id+'.mjpeg').pipe(fs.createWriteStream(watchmanData.id+'-'+(new Date()).getTime()+'.mjpeg'));
+                stream.on('finish', function() {
+                    fs.unlink(watchmanData.id+'.mjpeg', function(error) {
+                        if(error) {
+                            console.log(error);
+                        }
+                    });
+                });
+            }
+        });
+
+
     });
 
 
