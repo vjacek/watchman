@@ -1,3 +1,4 @@
+*.mjpeg
 node_modules
 *.log
 *.old
