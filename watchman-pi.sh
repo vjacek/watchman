@@ -4,8 +4,8 @@
 #!/bin/bash
 
 subnet="192.168.0."
-ip=100
-max=110
+ip=200
+max=210
 port=":8888"
 path="/locate"
 
