@@ -37,4 +37,5 @@ done
 # -fl       : Flush buffer after every capture, reduces latency and makes image splitting cleaner
 # -cd MJPEG : Motion JPEG formats capture frames as JPEG images
 # -vf       : Flip image vertically (camera is mounted upside down)
-raspivid -o - -t 0 -w 1024 -h 768 -fps 10 -g 1 -fl -cd MJPEG -vf | node send.js $castleIP
+#raspivid -o - -t 0 -w 1024 -h 768 -fps 10 -g 1 -fl -cd MJPEG -vf | node send.js $castleIP
+raspivid -o - -t 0 -w 1024 -h 768 -fps 10 -g 1 -fl -cd MJPEG -vf | nc -U "/tmp/watchman.sock"
