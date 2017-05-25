@@ -3,10 +3,9 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var fs = require('fs');
-
-
 var os = require('os');
 var path = require('path');
+
 var port = 8888;
 // var cv = require('opencv');
 // TODO: do all opencv processing on server
@@ -27,6 +26,13 @@ server.listen(port, function () {
 // Indexed by watchman ID; the watchman's OS host name
 var d = {};
 
+//var mjpegReady = fastPromise();
+var rollCounter = 0;
+
+// For building the file name
+var dir = '/tmp/';
+var fileTimestamp = getNewTimestampString();
+var extension = '.mjpeg';
 
 io.on('connection', function(socket) {
     console.log('Got Connection');
@@ -38,43 +44,27 @@ io.on('connection', function(socket) {
         // Make latest image available to clients
         d[watchmanData.id] = watchmanData.image;
 
-        // TESTING: write jpeg files to disk
-        //var date = (new Date()).getTime();
-        //fs.writeFile(date+'.jpeg', d[watchmanData.id], {encoding: 'base64'}, function(error) {
-        //    console.log(error);
-        //});
-
         // Write images to disk as a MJPEG
-        fs.appendFile(watchmanData.id+'.mjpeg', watchmanData.image, function(error) {
+        fs.appendFile(dir+watchmanData.id+fileTimestamp+extension, watchmanData.image, function(error) {
             if(error) {
                 console.log('Error writing to disk.');
                 console.log(error);
             }
         });
 
+        // If the video file has gotten too big, start using a new file
+        // Writing to timestamp named files prevents the need to ever roll/copy/move files
+        // Files are written in place with the timestamp of when they are started
 
-        // 10 MB written in 43 seconds
-        // ... therefore...
-        // 100 MB written in 430 seconds / 7.1 minutes
-        // 1000 MB / 1GB written in 4300 seconds / 71 minutes / 1.2 hours
-        // 20 GB per day
-
-        // TODO: don't want to do this on every single write, just do like every 10th or 100th image...
-        // Roll the video file once the current one has reached 100MB
-        fs.stat(watchmanData.id+'.mjpeg', function(error, stats) {
-            if(stats != undefined && stats.size > 100000000) {
+        fs.stat(dir+watchmanData.id+fileTimestamp+extension, (error, stats) => {
+            if(stats != undefined && stats.size > 100000000) { // 100 MB
+            //if(stats != undefined && stats.size > 1000000000) { // 1 GB
             //if(stats != undefined && stats.size > 5000000) {
-                var stream = fs.createReadStream(watchmanData.id+'.mjpeg').pipe(fs.createWriteStream(watchmanData.id+'-'+(new Date()).getTime()+'.mjpeg'));
-                stream.on('finish', function() {
-                    fs.unlink(watchmanData.id+'.mjpeg', function(error) {
-                        if(error) {
-                            console.log(error);
-                        }
-                    });
-                });
+                fileTimestamp = getNewTimestampString();
             }
         });
 
+        // TODO: convert MJPEG to MP4?
 
     });
 
@@ -91,3 +81,21 @@ io.on('connection', function(socket) {
     });
 
 });
+
+// 10 MB written in 43 seconds
+// ... therefore...
+// 100 MB written in 430 seconds / 7.1 minutes
+// 1000 MB / 1GB written in 4300 seconds / 71 minutes / 1.2 hours
+// 20 GB per day
+
+
+function getNewTimestampString() {
+    var d = new Date();
+    return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+'_'+d.getHours()+':'+d.getMinutes();
+}
+
+function fastPromise() {
+    return new Promise(function(resolve, reject) {
+        resolve(true);
+    });
+}
