@@ -19,7 +19,7 @@ app.get('/locate', function(request, response) {
 });
 
 server.listen(port, function () {
-  console.log(`http://${os.hostname()}:${port}`);
+    console.log(`http://${os.hostname()}:${port}`);
 });
 
 // An object holding the current/latest imageBuffer for each watchman client
@@ -69,13 +69,13 @@ io.on('connection', function(socket) {
     });
 
 
-    socket.on('locus-connect', function(data) {
+    socket.on('display-connect', function(data) {
         console.log('client connected');
         setInterval(function() {
             console.log('sending all latest frames to client');
-            //socket.emit('locus-data', {id: 'pi1', image: d['pi1']});
+            //socket.emit('display-data', {id: 'pi1', image: d['pi1']});
             Object.keys(d).forEach(function(watchman) {
-                socket.emit('locus-data', {id: watchman, image: d[watchman]});
+                socket.emit('display-data', {id: watchman, image: d[watchman]});
             });
         }, 100);
     });

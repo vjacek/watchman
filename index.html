@@ -14,14 +14,14 @@
 
     var socket = io.connect('http://localhost:8888');
 
-    socket.emit('locus-connect');
+    socket.emit('display-connect');
 
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     var domURL = window.URL || window.webkitURL;
 
     // Listen for camera data from clients
-    socket.on('locus-data', function(data) {
+    socket.on('display-data', function(data) {
 
         // The maximum size of a TCP packet is 64K or 65535 bytes
         // Since a single JPEG image may exceed this size, it is split up among several packets by the network layer
