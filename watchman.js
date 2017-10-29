@@ -5,15 +5,16 @@ var Promise = require('bluebird');
 var request = require('request');
 var io = require('socket.io-client');
 
+var config = require('./config.js');
 
 console.log('Watchman starting up...');
 
 // Find the Castle server
 var protocol = 'http://';
-var subnet = '192.168.0.';
-var ip = 200;
-var ipMax = 210;
-var port = ':8888';
+var subnet = config.subnet;
+var ip = config.ipStart;
+var ipMax = config.ipMax;
+var port = ':'+config.port;
 var path = '/locate';
 
 var castleIp;
